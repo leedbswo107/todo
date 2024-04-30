@@ -1,0 +1,38 @@
+<%- include('header.ejs') %>
+  <h2>쓰기페이지 ------</h2>
+  <form action="/add" method="post">
+    <label><span>할일 입력 : </span><input type="text" name="title" class="title" placeholder="할일 입력" required></label>
+    <label>종료예정일 : <input type="date" name="dateOfGoals" required></label>
+    <label hidden>작성일 <input type="date" name="today"></label>
+    <button class="submitBtn" >등록</button>
+  </form>
+  <p class="alertMessage">알림영역</p>
+  <script>
+    const titleInput = document.querySelector('input[name="title"]');
+    const goalsInput = document.querySelector('input[name="dateOfGoals"]');
+    const todayInput = document.querySelector('input[name="today"]');
+
+    const alertMessage = document.querySelector('.alertMessage');
+    const submitBtn = document.querySelector('.submitBtn');
+    submitBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      let title = titleInput.value;
+      let date = goalsInput.value;
+
+      let today = new Date().toISOString().slice(0,10);
+      todayInput.value = today;
+
+      if (!title || !date) {
+        alertMessage.innerHTML = '할일과 종료일을 입력하세요';
+        return;
+      } 
+      if(new Date(date) < new Date(today)){
+        alertMessage.innerHTML = '목표일은 오늘 날짜 이후로 선택해 주세요';
+        return;
+      }
+      alertMessage.innerHTML = '';
+      document.querySelector('form').submit();
+    });
+  </script>
+<%- include('footer.ejs') %>

@@ -1,0 +1,53 @@
+<%- include('header.ejs') %>
+  <h2>수정페이지 ------</h2>
+  <form action="/update" method="post">
+    <input type="hidden" name="_method" value="PUT">
+    <%# post에 PUT을 오버라이드 한거임. 다른 방법에는 AJAX 방식도 있음 %>
+    <input type="text" name="id" hidden>
+    <label>
+      <span>할일 입력 : </span>
+      <input type="text" name="title" class="title" placeholder="할일 입력" required>
+    </label>
+    <label>
+      종료예정일 :
+      <input type="date" name="dateOfGoals" required>
+    </label>
+    <label hidden>작성일 <input type="date" name="today"></label>
+    
+    <button class="submitBtn" >수정</button>
+  </form>
+  <p class="alertMessage">알림영역</p>
+  <script>
+    // DB에서 가져온 데이터를 바인딩하는 영역=============================================
+    const idInput = document.querySelector('input[name="id"]');
+    const titleInput = document.querySelector('input[name="title"]');
+    const goalsInput = document.querySelector('input[name="dateOfGoals"]');
+    const todayInput = document.querySelector('input[name="today"]');
+    const submitBtn = document.querySelector('.submitBtn');
+    const alertMessage = document.querySelector('.alertMessage');
+
+    idInput.value = `<%= post._id %>`;
+    titleInput.value = `<%= post.title %>`;
+    goalsInput.value = `<%= post.dateOfGoals %>`;
+    let today = new Date().toISOString().slice(0,10);
+    todayInput.value = today;
+    // ===========================================================================
+
+    submitBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      let title = titleInput.value;
+      let date = goalsInput.value;
+
+      if (!title || !date) {
+        alertMessage.innerHTML = '할일과 종료일을 입력하세요';
+        return;
+      } 
+      if(new Date(date) < new Date(today)){
+        alertMessage.innerHTML = '목표일은 오늘 날짜 이후로 선택해 주세요';
+        return;
+      }
+      alertMessage.innerHTML = '';
+      document.querySelector('form').submit();
+    });
+  </script>
+<%- include('footer.ejs') %>
