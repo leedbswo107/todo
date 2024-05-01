@@ -3,7 +3,7 @@ const methodOverride = require('method-override');
 const app = express();
 const port = 3000;
 const { MongoClient } = require('mongodb');
-const url = 'mongodb+srv://michael:EabZiABC0kqPVRfw@cluster0.n3sof3h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const url = 'mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGODB_PASSWORD}@cluster0.n3sof3h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 const client = new MongoClient(url);
 const getDB = async () => {
   await client.connect();
@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(methodOverride('_method'));
 app.get('/', (req, res) => res.render('index'));
+// list render
 app.get('/list', async (req, res) => {
   try {
     const db = await getDB();
@@ -23,6 +24,7 @@ app.get('/list', async (req, res) => {
     console.error(error); 
   }
 });
+// data upload to DB & reload list
 app.post('/add', async (req, res) => {
   const {title, dateOfGoals, today} = req.body;
   try {
@@ -35,6 +37,7 @@ app.post('/add', async (req, res) => {
   }
   res.redirect('/list');
 });
+// 
 app.get('/detail/:id', async (req, res) => {
   const id = parseInt(req.params.id);
   try {
